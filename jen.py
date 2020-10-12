@@ -30,7 +30,10 @@ def main():
         first = args[0]
         if first == '--test':
             print('==== Running tests... ====')
-            tests.test_tokenizer()
+            test_list = [tests.test_tokenizer, tests.test_numeric_token_errors]
+            for i, test in enumerate(test_list):
+                print('== Test #{0} =='.format(i))
+                test()
     else:
         repl()
 
