@@ -1,4 +1,5 @@
 import tokenize
+import expr_tree
 
 def test_tokenizer():
     tokenizer = tokenize.Tokenizer()
@@ -18,3 +19,15 @@ def test_numeric_token_errors():
             tokenizer.print_tokens(tokens)
         except tokenize.TokenizationError as e:
             print("For '{0}', caught tokenization error: {1}".format(expr, e.message))
+
+def test_expr_tree():
+    tokenizer = tokenize.Tokenizer()
+    expressions = ['2.0+3.0', '0.75+0.25*2', '2e10 + 3.5 * 8 - 2', '4/1*3^5-10', '2e-3/5.6*0.01',
+                   '18+5*3^2-100+2e4']
+    print(expressions)
+    for expr in expressions:
+        print('--------')
+        print(expr)
+        tokens = tokenizer.get_tokens(expr)
+        tokenizer.print_tokens(tokens)
+        print(expr_tree.build_tree(tokens))

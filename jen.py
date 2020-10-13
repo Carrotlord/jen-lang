@@ -30,7 +30,11 @@ def main():
         first = args[0]
         if first == '--test':
             print('==== Running tests... ====')
-            test_list = [tests.test_tokenizer, tests.test_numeric_token_errors]
+            test_list = [
+                tests.test_tokenizer,
+                tests.test_numeric_token_errors,
+                tests.test_expr_tree
+            ]
             for i, test in enumerate(test_list):
                 print('== Test #{0} =='.format(i))
                 test()
