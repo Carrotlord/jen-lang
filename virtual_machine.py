@@ -67,7 +67,7 @@ class TreeCompiler(object):
         )
         return dest
 
-class RuntimeError(Exception):
+class VmRuntimeError(Exception):
     def __init__(self, message):
         self.message = message
 
@@ -91,7 +91,7 @@ class VirtualMachine(object):
         for frame in reversed(self.frames):
             if reg_num in frame:
                 return frame[reg_num]
-        raise RuntimeError('Register {0} was never assigned a value'.format(reg_num))
+        raise VmRuntimeError('Register {0} was never assigned a value'.format(reg_num))
 
     def run_arithmetic(self, instruction, frame):
         param_code = instruction.param_code
@@ -114,7 +114,7 @@ class VirtualMachine(object):
         elif opcode == '^':
             frame[dest] = left ** right
         else:
-            raise RuntimeError('Unknown opcode {0}'.format(opcode))
+            raise VmRuntimeError('Unknown opcode {0}'.format(opcode))
 
 RII = 0
 RIR = 1
