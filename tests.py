@@ -23,6 +23,8 @@ def test_numeric_token_errors():
 
 def test_expr_tree():
     tokenizer = tokenize.Tokenizer()
+    compiler = virtual_machine.TreeCompiler()
+    vm = virtual_machine.VirtualMachine()
     expressions = ['2.0+3.0', '0.75+0.25*2', '2e10 + 3.5 * 8 - 2', '4/1*3^5-10', '2e-3/5.6*0.01',
                    '18+5*3^2-100+2e4']
     print(expressions)
@@ -33,8 +35,10 @@ def test_expr_tree():
         tokenizer.print_tokens(tokens)
         tree = expr_tree.build_tree(tokens)
         print(tree)
-        compiler = virtual_machine.TreeCompiler()
         instructions, final_reg = compiler.compile(tree)
         for inst in instructions:
             print(inst)
         print(final_reg)
+        vm.execute(instructions)
+        value = vm.get_reg(final_reg.reg_num)
+        print('{0} evaluates to {1}'.format(expr, tokenize.format_number(value)))
