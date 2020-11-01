@@ -100,6 +100,20 @@ class TokenizationError(Exception):
     def __init__(self, message):
         self.message = message
 
+def is_int(n):
+    return int(n) == n
+
+def format_number(n):
+    if is_int(n):
+        return str(int(n))
+    return str(n)
+
+def format_number_token(token, indentation=0):
+    if token.kind == 'Number':
+        return (' ' * indentation) + format_number(token.value[1])
+    else:
+        raise ExpressionError('Token {0} is not numeric'.format(token))
+
 class Token(object):
     def __init__(self, kind, val=None):
         self.kind = kind
@@ -112,3 +126,9 @@ class Token(object):
         if self.value is None:
             return '[{0}]'.format(self.kind)
         return '[{0} {1}]'.format(self.kind, self.value)
+
+    def format(self, indentation=0):
+        return format_number_token(self, indentation)
+
+    def is_leaf(self):
+        return True

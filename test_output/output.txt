@@ -1,0 +1,81 @@
+==== Running tests... ====
+== Test #0 ==
+2+3
+18 * 24
+5^3 + 21.24e+5
+8 + 16e-4
+123e99 * 135e1000
+[Number ('2', 2.0)][Operator +][Number ('3', 3.0)][Newline]
+[Number ('18', 18.0)][Operator *][Number ('24', 24.0)][Newline]
+[Number ('5', 5.0)][Operator ^][Number ('3', 3.0)][Operator +][Number ('21.24e+5', 2124000.0)][Newline]
+[Number ('8', 8.0)][Operator +][Number ('16e-4', 0.0016)][Newline]
+[Number ('123e99', 1.23e+101)][Operator *][Number ('135e1000', inf)]
+== Test #1 ==
+['2.+3.', '.75+.25', '2eee10 * 3...5', '3...5', '2EEe-3', '5.6e', '7E', '1e+2e', '1e*2e', '2e.0', '10.E+5']
+For '2.+3.', caught tokenization error: Number cannot end with decimal point: 2.
+For '.75+.25', caught tokenization error: Invalid character '.'
+For '2eee10 * 3...5', caught tokenization error: Number already has exponent field: 2ee
+For '3...5', caught tokenization error: Number cannot end with decimal point: 3.
+For '2EEe-3', caught tokenization error: Number already has exponent field: 2EE
+For '5.6e', caught tokenization error: Number cannot end with exponent marker: 5.6e
+For '7E', caught tokenization error: Number cannot end with exponent marker: 7E
+For '1e+2e', caught tokenization error: Number already has exponent field: 1e+2e
+For '1e*2e', caught tokenization error: Number cannot end with exponent marker: 1e
+For '2e.0', caught tokenization error: Decimal point cannot be preceded by exponent marker: 2e.
+For '10.E+5', caught tokenization error: Exponent marker cannot be preceded by decimal point: 10.E
+== Test #2 ==
+['2.0+3.0', '0.75+0.25*2', '2e10 + 3.5 * 8 - 2', '4/1*3^5-10', '2e-3/5.6*0.01', '18+5*3^2-100+2e4']
+--------
+2.0+3.0
+[Number ('2.0', 2.0)][Operator +][Number ('3.0', 3.0)]
+(+ 2 3)
+--------
+0.75+0.25*2
+[Number ('0.75', 0.75)][Operator +][Number ('0.25', 0.25)][Operator *][Number ('2', 2.0)]
+(+
+  0.75
+  (* 0.25 2)
+)
+--------
+2e10 + 3.5 * 8 - 2
+[Number ('2e10', 20000000000.0)][Operator +][Number ('3.5', 3.5)][Operator *][Number ('8', 8.0)][Operator -][Number ('2', 2.0)]
+(-
+  (+
+    20000000000
+    (* 3.5 8)
+  )
+  2
+)
+--------
+4/1*3^5-10
+[Number ('4', 4.0)][Operator /][Number ('1', 1.0)][Operator *][Number ('3', 3.0)][Operator ^][Number ('5', 5.0)][Operator -][Number ('10', 10.0)]
+(-
+  (*
+    (/ 4 1)
+    (^ 3 5)
+  )
+  10
+)
+--------
+2e-3/5.6*0.01
+[Number ('2e-3', 0.002)][Operator /][Number ('5.6', 5.6)][Operator *][Number ('0.01', 0.01)]
+(*
+  (/ 0.002 5.6)
+  0.01
+)
+--------
+18+5*3^2-100+2e4
+[Number ('18', 18.0)][Operator +][Number ('5', 5.0)][Operator *][Number ('3', 3.0)][Operator ^][Number ('2', 2.0)][Operator -][Number ('100', 100.0)][Operator +][Number ('2e4', 20000.0)]
+(+
+  (-
+    (+
+      18
+      (*
+        5
+        (^ 3 2)
+      )
+    )
+    100
+  )
+  20000
+)
