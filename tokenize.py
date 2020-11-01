@@ -109,10 +109,7 @@ def format_number(n):
     return str(n)
 
 def format_number_token(token, indentation=0):
-    if token.kind == 'Number':
-        return (' ' * indentation) + format_number(token.value[1])
-    else:
-        raise ExpressionError('Token {0} is not numeric'.format(token))
+    return (' ' * indentation) + format_number(token.extract_number())
 
 class Token(object):
     def __init__(self, kind, val=None):
@@ -132,3 +129,11 @@ class Token(object):
 
     def is_leaf(self):
         return True
+
+    def is_register(self):
+        return False
+
+    def extract_number(self):
+        if self.kind != 'Number':
+            raise ExpressionError("Can't extract number from non-numeric token {0}".format(self))
+        return self.value[1]

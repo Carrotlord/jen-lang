@@ -24,6 +24,9 @@ class ExprTree(object):
     def is_leaf(self):
         return False
 
+    def is_register(self):
+        return False
+
     def __str__(self):
         return self.format()
 

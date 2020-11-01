@@ -1,5 +1,6 @@
 import tokenize
 import expr_tree
+import virtual_machine
 
 def test_tokenizer():
     tokenizer = tokenize.Tokenizer()
@@ -30,4 +31,10 @@ def test_expr_tree():
         print(expr)
         tokens = tokenizer.get_tokens(expr)
         tokenizer.print_tokens(tokens)
-        print(expr_tree.build_tree(tokens))
+        tree = expr_tree.build_tree(tokens)
+        print(tree)
+        compiler = virtual_machine.TreeCompiler()
+        instructions, final_reg = compiler.compile(tree)
+        for inst in instructions:
+            print(inst)
+        print(final_reg)
