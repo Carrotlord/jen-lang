@@ -67,12 +67,58 @@ class TreeCompiler(object):
         )
         return dest
 
+class RuntimeError(Exception):
+    def __init__(self, message):
+        self.message = message
+
 class VirtualMachine(object):
-    pass
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
+        self.frames = [{}]
+
+    def execute(self, instructions):
+        prgm_counter = 0
+        length = len(instructions)
+        frame = self.frames[-1]
+        while prgm_counter < length:
+            current = instructions[prgm_counter]
+            self.run_arithmetic(current, frame)
+            prgm_counter += 1
+
+    def get_reg(self, reg_num):
+        for frame in reversed(self.frames):
+            if reg_num in frame:
+                return frame[reg_num]
+        raise RuntimeError('Register {0} was never assigned a value'.format(reg_num))
+
+    def run_arithmetic(self, instruction, frame):
+        param_code = instruction.param_code
+        dest, left, right = instruction.operands
+        if param_code & 1:
+            right = frame[right]
+        if param_code & 2:
+            left = frame[left]
+        opcode = instruction.opcode
+        if opcode == '+':
+            frame[dest] = left + right
+        elif opcode == '-':
+            frame[dest] = left - right
+        elif opcode == '*':
+            frame[dest] = left * right
+        elif opcode == '/':
+            frame[dest] = left / right
+        elif opcode == '%':
+            frame[dest] = left % right
+        elif opcode == '^':
+            frame[dest] = left ** right
+        else:
+            raise RuntimeError('Unknown opcode {0}'.format(opcode))
 
 RII = 0
-RRI = 1
-RIR = 2
+RIR = 1
+RRI = 2
 RRR = 3
 
 param_table = {

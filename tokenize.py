@@ -101,7 +101,8 @@ class TokenizationError(Exception):
         self.message = message
 
 def is_int(n):
-    return int(n) == n
+    # Can't use `int(n) == n` because it gives issues with very large numbers
+    return str(n).endswith('.0')
 
 def format_number(n):
     if is_int(n):

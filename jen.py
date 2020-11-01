@@ -8,11 +8,15 @@ if version_major < 3:
     print('Error: please use Python 3, not Python 2')
     exit()
 
-import tokenize
+import expr_tree
 import tests
+import tokenize
+import virtual_machine
 
 def repl():
     tokenizer = tokenize.Tokenizer()
+    compiler = virtual_machine.TreeCompiler()
+    vm = virtual_machine.VirtualMachine()
     while True:
         line = input('Jen> ')
         if line.strip() == 'exit()':
@@ -20,7 +24,14 @@ def repl():
         else:
             try:
                 tokens = tokenizer.get_tokens(line)
-                tokenizer.print_tokens(tokens)
+                if len(tokens) == 1:
+                    value = tokens[0].extract_number()
+                else:
+                    tree = expr_tree.build_tree(tokens)
+                    instructions, final_reg = compiler.compile(tree)
+                    vm.execute(instructions)
+                    value = vm.get_reg(final_reg.reg_num)
+                print(tokenize.format_number(value))
             except tokenize.TokenizationError as e:
                 print('Error: ' + e.message)
 
