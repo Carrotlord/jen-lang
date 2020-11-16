@@ -1,16 +1,16 @@
-import tokenize
+import tokenize2
 import expr_tree
 import virtual_machine
 
 def test_tokenizer():
-    tokenizer = tokenize.Tokenizer()
+    tokenizer = tokenize2.Tokenizer()
     expressions = '2+3\n18 * 24\n5^3 + 21.24e+5\n8 + 16e-4\n123e99 * 135e1000'
     print(expressions)
     tokens = tokenizer.get_tokens(expressions)
     tokenizer.print_tokens(tokens)
 
 def test_numeric_token_errors():
-    tokenizer = tokenize.Tokenizer()
+    tokenizer = tokenize2.Tokenizer()
     expressions = ['2.+3.', '.75+.25', '2eee10 * 3...5', '3...5', '2EEe-3',
                    '5.6e', '7E', '1e+2e', '1e*2e', '2e.0', '10.E+5']
     print(expressions)
@@ -18,11 +18,11 @@ def test_numeric_token_errors():
         try:
             tokens = tokenizer.get_tokens(expr)
             tokenizer.print_tokens(tokens)
-        except tokenize.TokenizationError as e:
+        except tokenize2.TokenizationError as e:
             print("For '{0}', caught tokenization error: {1}".format(expr, e.message))
 
 def test_expr_tree():
-    tokenizer = tokenize.Tokenizer()
+    tokenizer = tokenize2.Tokenizer()
     compiler = virtual_machine.TreeCompiler()
     vm = virtual_machine.VirtualMachine()
     expressions = ['2.0+3.0', '0.75+0.25*2', '2e10 + 3.5 * 8 - 2', '4/1*3^5-10', '2e-3/5.6*0.01',
@@ -41,4 +41,4 @@ def test_expr_tree():
         print(final_reg)
         vm.execute(instructions)
         value = vm.get_reg(final_reg.reg_num)
-        print('{0} evaluates to {1}'.format(expr, tokenize.format_number(value)))
+        print('{0} evaluates to {1}'.format(expr, tokenize2.format_number(value)))

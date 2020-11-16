@@ -8,13 +8,15 @@ if version_major < 3:
     print('Error: please use Python 3, not Python 2')
     exit()
 
+import error
 import expr_tree
+import parser2
 import tests
-import tokenize
+import tokenize2
 import virtual_machine
 
 def repl():
-    tokenizer = tokenize.Tokenizer()
+    tokenizer = tokenize2.Tokenizer()
     compiler = virtual_machine.TreeCompiler()
     vm = virtual_machine.VirtualMachine()
     while True:
@@ -24,6 +26,11 @@ def repl():
         else:
             try:
                 tokens = tokenizer.get_tokens(line)
+                if '(' in line or ')' in line:
+                    # Show tokens but don't evaluate the expression yet
+                    parser2.mark_parens(tokens)
+                    tokenizer.print_tokens(tokens)
+                    continue
                 if len(tokens) == 1:
                     value = tokens[0].extract_number()
                 else:
@@ -31,8 +38,8 @@ def repl():
                     instructions, final_reg = compiler.compile(tree)
                     vm.execute(instructions)
                     value = vm.get_reg(final_reg.reg_num)
-                print(tokenize.format_number(value))
-            except tokenize.TokenizationError as e:
+                print(tokenize2.format_number(value))
+            except error.JenError as e:
                 print('Error: ' + e.message)
 
 def main():

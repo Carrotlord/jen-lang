@@ -1,3 +1,5 @@
+import error
+
 class Tokenizer(object):
     def get_tokens(self, program):
         self.pos = 0
@@ -13,6 +15,9 @@ class Tokenizer(object):
                 self.pos += 1
             elif is_operator(char):
                 tokens.append(Token('Operator', char))
+                self.pos += 1
+            elif is_brace(char):
+                tokens.append(Token('Brace', char))
                 self.pos += 1
             elif char.isspace():
                 # Ignore whitespace that isn't a newline
@@ -93,10 +98,13 @@ class Tokenizer(object):
 def is_operator(char):
     return char in '+-*/%^'
 
+def is_brace(char):
+    return char in '()[]{}'
+
 def trailing_exp_error(buffer):
     raise TokenizationError('Number cannot end with exponent marker: ' + buffer)
 
-class TokenizationError(Exception):
+class TokenizationError(error.JenError):
     def __init__(self, message):
         self.message = message
 
@@ -133,6 +141,13 @@ class Token(object):
 
     def is_register(self):
         return False
+
+    def mark(self, index):
+        if self.kind != 'Brace':
+            raise TokenizationError('Non-brace token cannot be marked')
+        elif type(self.value) is tuple:
+            raise TokenizationError('Brace token was already marked')
+        self.value = (self.value, index)
 
     def extract_number(self):
         if self.kind != 'Number':

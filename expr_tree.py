@@ -1,4 +1,5 @@
-import tokenize
+import error
+import tokenize2
 
 class ExprTree(object):
     def __init__(self, operator, left, right):
@@ -33,7 +34,7 @@ class ExprTree(object):
     def __repr__(self):
         return str(self)
 
-class ExpressionError(Exception):
+class ExpressionError(error.JenError):
     def __init__(self, message):
         self.message = message
 
@@ -49,7 +50,7 @@ def build_tree(tokens):
         return tokens[0]
     operator_indices = []
     for i, token in enumerate(tokens):
-        if type(token) is tokenize.Token and token.kind == 'Operator':
+        if type(token) is tokenize2.Token and token.kind == 'Operator':
             operator_indices.append(i)
     for i in range(MAX_PRECEDENCE + 1):
         for j in operator_indices:

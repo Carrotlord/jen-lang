@@ -1,3 +1,4 @@
+import error
 import expr_tree
 
 class Instruction(object):
@@ -67,7 +68,7 @@ class TreeCompiler(object):
         )
         return dest
 
-class VmRuntimeError(Exception):
+class VmRuntimeError(error.JenError):
     def __init__(self, message):
         self.message = message
 
