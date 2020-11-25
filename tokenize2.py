@@ -146,8 +146,10 @@ class Token(object):
         if self.kind != 'Brace':
             raise TokenizationError('Non-brace token cannot be marked')
         elif type(self.value) is tuple:
-            raise TokenizationError('Brace token was already marked')
-        self.value = (self.value, index)
+            brace, _ = self.value
+            self.value = (brace, index)
+        else:
+            self.value = (self.value, index)
 
     def extract_number(self):
         if self.kind != 'Number':

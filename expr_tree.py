@@ -1,4 +1,5 @@
 import error
+import parser2
 import tokenize2
 
 class ExprTree(object):
@@ -45,10 +46,37 @@ precedences = {
 }
 MAX_PRECEDENCE = 2
 
+def replace_trees(tokens, pairs):
+    new_tokens = []
+    start = 0
+    for i, end in pairs:
+        sub_expr = tokens[i+1 : end]
+        sub_tree = build_tree(sub_expr)
+        new_tokens += tokens[start : i]
+        new_tokens.append(sub_tree)
+        start = end + 1
+    new_tokens += tokens[start:]
+    return new_tokens
+
 def build_tree(tokens):
-    if len(tokens) == 1:
+    length = len(tokens)
+    if length == 1:
         return tokens[0]
+    parser2.mark_parens(tokens)
     operator_indices = []
+    pairs = []
+    i = 0
+    while i < length:
+        token = tokens[i]
+        if type(token) is tokenize2.Token and token.kind == 'Brace' and type(token.value) is tuple:
+            brace, end = token.value
+            if brace == '(':
+                pairs.append((i, end))
+            i = end + 1
+        else:
+            i += 1
+    if len(pairs) > 0:
+        tokens = replace_trees(tokens, pairs)
     for i, token in enumerate(tokens):
         if type(token) is tokenize2.Token and token.kind == 'Operator':
             operator_indices.append(i)

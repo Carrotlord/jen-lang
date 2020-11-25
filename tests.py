@@ -1,5 +1,6 @@
-import tokenize2
 import expr_tree
+import parser2
+import tokenize2
 import virtual_machine
 
 def test_tokenizer():
@@ -21,12 +22,10 @@ def test_numeric_token_errors():
         except tokenize2.TokenizationError as e:
             print("For '{0}', caught tokenization error: {1}".format(expr, e.message))
 
-def test_expr_tree():
+def test_expressions(expressions):
     tokenizer = tokenize2.Tokenizer()
     compiler = virtual_machine.TreeCompiler()
     vm = virtual_machine.VirtualMachine()
-    expressions = ['2.0+3.0', '0.75+0.25*2', '2e10 + 3.5 * 8 - 2', '4/1*3^5-10', '2e-3/5.6*0.01',
-                   '18+5*3^2-100+2e4']
     print(expressions)
     for expr in expressions:
         print('--------')
@@ -42,3 +41,15 @@ def test_expr_tree():
         vm.execute(instructions)
         value = vm.get_reg(final_reg.reg_num)
         print('{0} evaluates to {1}'.format(expr, tokenize2.format_number(value)))
+
+def test_expr_tree():
+    test_expressions([
+        '2.0+3.0', '0.75+0.25*2', '2e10 + 3.5 * 8 - 2',
+        '4/1*3^5-10', '2e-3/5.6*0.01', '18+5*3^2-100+2e4'
+    ])
+
+def test_parentheses():
+    test_expressions([
+        '(2.0+3.0)*100', '(0.75+5.25)*(2+1)', '(2e10 + 3.5) * (8 - (1+1))',
+        '(4/(2*3)^5)-(10)', '2e-3/(5.6*0.01)', '(18+(5*3))^(4-(100-98))'
+    ])

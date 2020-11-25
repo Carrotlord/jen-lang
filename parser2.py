@@ -1,4 +1,11 @@
 import expr_tree
+import tokenize2
+
+def is_paren(token, brace):
+    if type(token.value) is tuple:
+        paren, _ = token.value
+        return paren == brace
+    return token.value == brace
 
 def mark_sublist_parens(tokens, start, stop):
     """
@@ -8,15 +15,17 @@ def mark_sublist_parens(tokens, start, stop):
     i = start
     while i <= stop:
         token = tokens[i]
-        if token.kind == 'Brace':
-            if token.value == ')':
+        if type(token) is tokenize2.Token and token.kind == 'Brace':
+            if is_paren(token, ')'):
                 return i
-            elif token.value == '(':
+            elif is_paren(token, '('):
                 end = mark_sublist_parens(tokens, i + 1, stop)
                 if end is None:
                     raise expr_tree.ExpressionError('Found opening parenthesis without closing parenthesis')
                 token.mark(end)
                 i = end + 1
+            else:
+                i += 1
         else:
             i += 1
     return None

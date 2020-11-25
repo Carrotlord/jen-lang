@@ -26,11 +26,6 @@ def repl():
         else:
             try:
                 tokens = tokenizer.get_tokens(line)
-                if '(' in line or ')' in line:
-                    # Show tokens but don't evaluate the expression yet
-                    parser2.mark_parens(tokens)
-                    tokenizer.print_tokens(tokens)
-                    continue
                 if len(tokens) == 1:
                     value = tokens[0].extract_number()
                 else:
@@ -51,7 +46,8 @@ def main():
             test_list = [
                 tests.test_tokenizer,
                 tests.test_numeric_token_errors,
-                tests.test_expr_tree
+                tests.test_expr_tree,
+                tests.test_parentheses
             ]
             for i, test in enumerate(test_list):
                 print('== Test #{0} =='.format(i))
