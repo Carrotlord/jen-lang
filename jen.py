@@ -15,6 +15,13 @@ import tests
 import tokenize2
 import virtual_machine
 
+def has_function_calls(tree):
+    if type(tree) is expr_tree.FunctionCall:
+        return True
+    elif type(tree) is expr_tree.ExprTree:
+        return has_function_calls(tree.left) or has_function_calls(tree.right)
+    return False
+
 def repl():
     tokenizer = tokenize2.Tokenizer()
     compiler = virtual_machine.TreeCompiler()
@@ -30,6 +37,10 @@ def repl():
                     value = tokens[0].extract_number()
                 else:
                     tree = expr_tree.build_tree(tokens)
+                    if has_function_calls(tree):
+                        tokenizer.print_tokens(tokens)
+                        print(tree)
+                        continue
                     instructions, final_reg = compiler.compile(tree)
                     vm.execute(instructions)
                     value = vm.get_reg(final_reg.reg_num)

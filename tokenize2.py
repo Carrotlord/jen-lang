@@ -1,4 +1,5 @@
 import error
+import expr_tree
 
 class Tokenizer(object):
     def get_tokens(self, program):
@@ -22,6 +23,11 @@ class Tokenizer(object):
             elif char.isspace():
                 # Ignore whitespace that isn't a newline
                 self.pos += 1
+            elif char.isalpha() or char == '_':
+                tokens.append(self.read_name(char))
+            elif char == ',':
+                tokens.append(Token('Delimiter', ','))
+                self.pos += 1
             else:
                 raise TokenizationError("Invalid character '{0}'".format(char))
         return tokens
@@ -30,6 +36,18 @@ class Tokenizer(object):
         if next_pos is not None:
             return next_pos < self.length
         return self.pos < self.length
+
+    def read_name(self, first_char):
+        buffer = first_char
+        self.pos += 1
+        while self.in_bounds():
+            char = self.program[self.pos]
+            if char.isalpha() or char.isdigit() or char == '_':
+                buffer += char
+                self.pos += 1
+            else:
+                break
+        return Token('Name', buffer)
 
     def read_number(self, first_digit):
         buffer = first_digit
@@ -134,6 +152,8 @@ class Token(object):
         return '[{0} {1}]'.format(self.kind, self.value)
 
     def format(self, indentation=0):
+        if self.kind == 'Name':
+            return self.value
         return format_number_token(self, indentation)
 
     def is_leaf(self):
@@ -153,5 +173,5 @@ class Token(object):
 
     def extract_number(self):
         if self.kind != 'Number':
-            raise ExpressionError("Can't extract number from non-numeric token {0}".format(self))
+            raise expr_tree.ExpressionError("Can't extract number from non-numeric token {0}".format(self))
         return self.value[1]
